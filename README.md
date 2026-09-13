@@ -1,103 +1,48 @@
-# Transformacion de texto a vectores con TFIDF
+# Transformacion de texto en embeddings con Word2Vec
 
-## Descripción
+Ejercicio de procesamiento de Lenguaje Natural, se convierte texto en español
+en representaciones numericas densas embeddings usando Word2Vec, implementado con
+TensorFlow y Keras segun el esquema skip-gram con muestreo negativo.
 
-En el siguiente ejercicio se busca transformar textos en español en representaciones numéricas mediante TF IDF, calcular similitud del coseno y realizar una búsqueda sencilla de documentos similares.
+## Abrir en Colab
 
----
+Sube `01_texto_a_embeddings_word2vec.ipynb` a Google Colab y ejecuta todas las celdas.
+No hace falta descargar datos: el corpus se genera dentro del propio cuaderno. El
+entrenamiento tarda alrededor de medio minuto.
 
-## Objetivo
+## objetivo
 
-Implementar un proceso básico de procesamiento de lenguaje natural que permita:
+Word2Vec parte de que las palabras que aparecen rodeadas de las mismas palabras tienden a
+significar cosas parecidas, el modelo aprende a distinguir pares de palabras que si
+aparecen juntas en el texto de pares inventados al azar, y para resolver esa tarea acaba
+asignando vectores parecidos a las palabras intercambiables.
 
-Convertir textos en vectores TF-IDF, medir la similitud del coseno entre documentos y utilizar esa representación para realizar una búsqueda sencilla por contenido.
+El corpus se genera con plantillas y ranuras de sinonimos, de modo que se sabe de antemano
+que palabras deberian parecerse. Eso da un criterio objetivo para evaluar el resultado.
 
----
+## Contenido del notebook
 
-## Técnica utilizada
+| Seccion | Tema |
+|---|---|
+| 1 | Librerias y semilla |
+| 2 | Corpus generado con plantillas y sinonimos |
+| 3 | Preprocesamiento |
+| 4 | TF-IDF como punto de partida |
+| 5 | Word2Vec con Keras: skipgrams y las dos capas Embedding |
+| 6 | Entrenamiento y consulta de los vectores |
+| 7 | Similitud entre terminos |
+| 8 | Vectores de documento y busqueda |
+| 9 | Conclusiones |
 
-### TF-IDF
+## Datos del ejercicio
 
-TF-IDF es una técnica que asigna un peso a cada palabra dependiendo de su importancia dentro de un documento y del conjunto de documentos.
+- 900 documentos, 111 palabras distintas
+- 162.096 pares de entrenamiento generados con skipgrams
+- Red de 11.100 parametros: 111 palabras x 50 dimensiones x 2 capas
+- 20 epocas, lotes de 256, optimizador Adam
+- Perdida de 0,4260 a 0,1226
 
+## Resultado
 
----
-
-## Corpus
-
-El proyecto utiliza un corpus pequeño de 20 documentos sintéticos, relacionados con diferentes situaciones de ciberseguridad.
-
-Las categorías utilizadas son:
-
-* Phishing
-* Malware
-* Ransomware
-* Vulnerabilidades
-* Fuga de datos
-* General
-
-El corpus reducido permite comprender el funcionamiento del método sin la complejidad del laboratorio original.
-
----
-
-## Preprocesamiento
-
-Antes de aplicar TF-IDF se realiza un procesamiento básico:
-
-* Conversión de texto a minúsculas.
-* Eliminación de acentos.
-* Tokenización mediante expresiones regulares.
-* Eliminación de palabras comunes (stopwords).
-* Eliminación de tokens demasiado pequeños.
-
-
-## Funcionamiento
-
-El flujo general del proyecto es:
-
-```text
-Textos
-  ↓
-Preprocesamiento
-  ↓
-Tokenización
-  ↓
-TF-IDF
-  ↓
-Vectores numéricos
-  ↓
-Similitud del coseno
-  ↓
-Búsqueda de documentos similares
-```
-
----
-
-## Similitud del coseno
-
-Para comparar dos documentos se utiliza la similitud del coseno.
-
-Un valor cercano a 1 indica una mayor similitud entre los documentos, mientras que un valor cercano a 0 indica poca similitud.
-
----
-
-## Ejemplo de búsqueda
-
-El notebook realiza una búsqueda utilizando la consulta:
-
-```text
-correo falso para robar contrasenas
-```
-
-TF IDF transforma la consulta en un vector y posteriormente calcula su similitud con los documentos del corpus.
-
-Los documentos con mayor similitud son presentados como los resultados más relevantes.
-
----
-
-
-## Requisitos
-
-se puede ejecutar el notebook utilizando Google Colab
-
----
+Los vecinos mas proximos que aprende el modelo reproducen los grupos de sinonimos del
+generador, sin que ninguna etiqueta se lo haya indicado:
